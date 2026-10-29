@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Estadísticas Puestos de Salud</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Puestos de Salud - Reporte General</h2>
+        <a href="{% url 'registrar_equipo' %}" class="btn btn-primary">+ Registrar Usuario</a>
+    </div>
+
+    <!-- Estadísticas por Puesto solicitadas en el taller -->
+    <div class="row">
+        {% for d in estadisticas %}
+        <div class="col-md-4 mb-3">
+            <div class="card shadow-sm border-primary">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Puesto: {{ d.puesto }}</h5>
+                </div>
+                <div class="card-body">
+                    <p class="fs-5"><strong>Total Usuarios:</strong> {{ d.total_usuarios }}</p>
+                    <hr>
+                    <h6>Personas por Tipo de Prueba:</h6>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between">
+                            Microbiología: <span><b>{{ d.micro }}</b> ({{ d.pct_micro }}%)</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            Bacteriología: <span><b>{{ d.bact }}</b> ({{ d.pct_bact }}%)</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between">
+                            Química: <span><b>{{ d.quim }}</b> ({{ d.pct_quim }}%)</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Listado con valor a pagar por cada usuario -->
+    <h3 class="mt-4">Usuarios Procesados</h3>
+    <table class="table table-striped table-bordered bg-white shadow-sm mt-2">
+        <thead class="table-dark">
+            <tr>
+                <th>Usuario</th>
+                <th>Documento</th>
+                <th>Puesto</th>
+                <th>Pruebas</th>
+                <th>Total a Pagar</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for u in usuarios_registrados %}
+            <tr>
+                <td>{{ u.nombre_usuario }}</td>
+                <td>{{ u.documento }}</td>
+                <td>{{ u.puesto.nombre }}</td>
+                <td>
+                    {% if u.microbiologia %}<span class="badge bg-info text-dark">Microbiología</span>{% endif %}
+                    {% if u.bacteriologia %}<span class="badge bg-warning text-dark">Bacteriología</span>{% endif %}
+                    {% if u.quimica %}<span class="badge bg-success">Química</span>{% endif %}
+                </td>
+                <td><strong>${{ u.total_a_pagar }}</strong></td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="5" class="text-center text-muted">Aún no hay usuarios registrados.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
